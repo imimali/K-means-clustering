@@ -6,12 +6,12 @@ Created on 13 Oct 2017
 import random as rn
 
 
-class DataGenerator():
+class DataGenerator:
     '''
     generate data for K-means clustering algorithm to work with
     '''
 
-    def __init__(self, centroids, noise, pointsPerCentroid):
+    def __init__(self, centroids, noise, points_per_centroid):
         '''
         centroids-array of centroids(those represented as arrays also)
         noise -the radius of the circle we are generating points inside, which is also distorted in the algorithm to appear more random
@@ -20,7 +20,7 @@ class DataGenerator():
         self.centroids = centroids
         self.noise = noise
         self.data = []
-        self.pointsPerCentroid = pointsPerCentroid
+        self.pointsPerCentroid = points_per_centroid
 
     def generate(self):
         for centroid in self.centroids:
@@ -29,19 +29,18 @@ class DataGenerator():
                 point = []
                 for i in range(len(centroid)):
                     val = self.noise / 4
-                    distorsion = self.noise + rn.random() * (val * 2) - val
-                    elem = centroid[i] + rn.random() * (2 * distorsion) - distorsion
+                    distortion = self.noise + rn.random() * (val * 2) - val
+                    elem = centroid[i] + rn.random() * (2 * distortion) - distortion
                     point.append(elem)
                 self.data.append(point)
         rn.shuffle(self.data)
         return self.data
 
-    def writeToFile(self, fname):
-        f = open(fname, 'w')
-        for point in self.data:
-            s = ''
-            for elem in point:
-                s += str(elem) + ' '
-            s += '\n'
-            f.write(s)
-        f.close()
+    def write_to_file(self, fname):
+        with open(fname, 'w')as f:
+            for point in self.data:
+                s = ''
+                for elem in point:
+                    s += str(elem) + ' '
+                s += '\n'
+                f.write(s)

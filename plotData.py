@@ -14,11 +14,11 @@ clust = KMeansClustering(3, 10)
 centroids = [[25, 25], [100, 100], [100, 25]]
 gen = DataGenerator(centroids, 30, 70)
 
-X = gen.generate()
-hist = clust.learning(X)
+xs = gen.generate()
+hist = clust.learning(xs)
 x = []
 y = []
-for point in X:
+for point in xs:
     x.append(point[0])
     y.append(point[1])
 plt.scatter(x, y, label='skitskat', color='k')
