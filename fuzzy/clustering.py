@@ -19,6 +19,19 @@ def initialize_memberships(nr_centroids, nr_examples):
 
 
 def compute_centroids(xs, memberships, m):
+    new_centroids = [[] for _ in range(len(memberships[0]))]
+    for i in range(len(new_centroids)):
+        for j in range(len(xs[0])):
+            vij = 0
+            for k in range(len(xs)):
+                vij += (memberships[k][i] ** m) * xs[k][i]
+            vij /= sum([memberships[k][i] for k in range(len(xs))])
+            new_centroids[i].append(vij)
+    print(np.shape(new_centroids))
+    return new_centroids
+
+
+def compute_centroids2(xs, memberships, m):
     return ([[sum([(x[i] * membership[i]) ** m for i in range(len(x))]) /
               sum([elem ** m for elem in membership])
               for membership in memberships]
@@ -64,7 +77,7 @@ if __name__ == '__main__':
     gen = DataGenerator([[20, 20], [100, 100]], 30, 50)
     data = gen.generate()
     cents, membs, history = fuzzy_k_means(data, 2, max_iter=7)
-    # print(cents, membs)
+    print(cents, membs)
     print("*" * 10)
     print(np.shape(cents), np.shape(membs))
     print("*" * 10)
