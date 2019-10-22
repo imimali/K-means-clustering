@@ -9,7 +9,6 @@ import random as rn
 import matplotlib.pyplot as plt
 import numpy as np
 from scipy.special import softmax
-from skfuzzy import cmeans
 
 from data_generator import DataGenerator
 
@@ -20,13 +19,14 @@ def initialize_memberships(nr_centroids, nr_examples):
 
 
 def compute_centroids(xs, memberships, m):
-    return ([sum([(x[i] * memberships[i]) ** m] for i in range(len(x))) /
-             sum([membership ** m for membership in memberships])
+    return ([[sum([(x[i] * membership[i]) ** m for i in range(len(x))]) /
+              sum([elem ** m for elem in membership])
+              for membership in memberships]
              for x in xs])
 
 
 def compute_distances_from_centroids(xs, centroids):
-    return [[sum([(x[i] - centroid[i]) ** 2] for i in range(len(x))) ** 0.5
+    return [[sum([(x[i] - centroid[i]) ** 2 for i in range(len(x))]) ** 0.5
              for centroid in centroids]
             for x in xs]
 
@@ -44,31 +44,32 @@ def update_memberships(distances, m):
     return new_memberships
 
 
-def fuzzy_k_means(xs, nr_centroids, m, max_iter=30, epsilon=1e-2):
+def fuzzy_k_means(xs, nr_centroids, m=2, max_iter=30, epsilon=1e-2):
     memberships = initialize_memberships(nr_centroids, len(xs))
     centroids = compute_centroids(xs, memberships, m)
+    print('centroids', np.shape(centroids), centroids)
     centroid_history = [centroids]
     for _ in range(max_iter):
+        print('one step is done')
         distances = compute_distances_from_centroids(xs, centroids)
         centroids = compute_centroids(xs, memberships, m)
         memberships = update_memberships(distances, m)
         centroid_history.append(centroids)
-    return centroids, memberships
+    return centroids, memberships, centroid_history
 
 
 if __name__ == '__main__':
     xs = np.random.random_integers(100, size=(100,))
     ys = np.random.random_integers(100, size=(100,))
-    print("*" * 10)
-    print(initialize_memberships(2, 10))
-    print("*" * 10)
     gen = DataGenerator([[20, 20], [100, 100]], 30, 50)
-    # data = np.array([xs, ys])
     data = gen.generate()
+    cents, membs, history = fuzzy_k_means(data, 2, max_iter=7)
+    # print(cents, membs)
+    print("*" * 10)
+    print(np.shape(cents), np.shape(membs))
+    print("*" * 10)
+    # for h in history:
+    #    print(h)
     data = np.array(list(zip(*data)))
     plt.scatter(data[0], data[1], label='skitskat', color='k')
-    print(np.shape(data))
-    cntr, u, u0, d, jm, p, fpc = cmeans(data, 2, 2, 1e-2, 1000)
-    # print(cntr, u, u0, d, jm, p, fpc)
-    print(u)
     plt.show()
