@@ -7,7 +7,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.ticker import MaxNLocator
 from math import *
-from dataGenerator import DataGenerator
+from data_generator import DataGenerator
 from clustering import KMeansClustering
 
 clust = KMeansClustering(3, 10)
