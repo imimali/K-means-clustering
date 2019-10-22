@@ -32,7 +32,7 @@ class KMeansClustering:
             self.centroids[idx[i]] = xs[i]
 
     def compute_distance_from_centroid(self, x, centroid):
-        return sum([(x[i] - centroid[i]) ** 2] for i in range(len(x)))
+        return sum([(x[i] - centroid[i]) ** 2 for i in range(len(x))])
 
     def find_closest_centroids(self, xs):
         '''
