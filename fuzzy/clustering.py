@@ -18,18 +18,6 @@ def initialize_memberships(nr_centroids, nr_examples):
             for _ in range(nr_examples)]
 
 
-def compute_centroid3(xs, memberships, m):
-    new_centroids = [[] for _ in range(len(memberships[0]))]
-    for i in range(len(new_centroids)):
-        for j in range(len(xs[0])):
-            vij = 0
-            for k in range(len(xs)):
-                vij += (memberships[k][j] ** m) * xs[k][j]
-            vij /= sum([memberships[k][j] ** m for k in range(len(xs))])
-            new_centroids[i].append(vij)
-    return new_centroids
-
-
 def compute_centroids(xs, memberships, m):
     new_centroids = [[] for _ in range(len(memberships[0]))]
     for cluster_index in range(len(memberships[0])):
@@ -38,16 +26,8 @@ def compute_centroids(xs, memberships, m):
             for k in range(len(xs)):
                 v += (memberships[k][cluster_index] ** m) * xs[k][i]
             v /= sum([memberships[k][cluster_index] ** m for k in range(len(xs))])
-
             new_centroids[cluster_index].append(v)
     return new_centroids
-
-
-def compute_centroids2(xs, memberships, m):
-    return ([[sum([(x[i] * membership[i]) ** m for i in range(len(x))]) /
-              sum([elem ** m for elem in membership])
-              for membership in memberships]
-             for x in xs])
 
 
 def compute_distances_from_centroids(xs, centroids):
@@ -57,16 +37,9 @@ def compute_distances_from_centroids(xs, centroids):
 
 
 def update_memberships(distances, m):
-    new_memberships = []
-    for distance_vector in distances:
-        new_distance_vector = []
-        for distance in distance_vector:
-            new_distance = 0
-            for other_dist in distance_vector:
-                new_distance += (distance / other_dist) ** (2 / (m - 1))
-            new_distance_vector.append(new_distance ** -1)
-        new_memberships.append(new_distance_vector)
-    return new_memberships
+    return [[sum([(distance / other_dist) ** (2 / (m - 1)) for other_dist in distance_vector]) ** -1
+             for distance in distance_vector]
+            for distance_vector in distances]
 
 
 def fuzzy_k_means(xs, nr_centroids, m=2, max_iter=30, epsilon=1e-2):
@@ -86,7 +59,11 @@ def fuzzy_k_means(xs, nr_centroids, m=2, max_iter=30, epsilon=1e-2):
 if __name__ == '__main__':
     gen = DataGenerator([[20, 20], [100, 100]], 30, 50)
     data = gen.generate()
+    import time
+
+    start = time.time()
     cents, membs, history, memb_hist = fuzzy_k_means(data, 2, max_iter=100)
+    print(time.time() - start, 'epalsed')
     print(cents, membs)
     for h in range(len(history)):
         print('*', history[h])
