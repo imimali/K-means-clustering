@@ -72,7 +72,6 @@ def update_memberships(distances, m):
 def fuzzy_k_means(xs, nr_centroids, m=2, max_iter=30, epsilon=1e-2):
     memberships = initialize_memberships(nr_centroids, len(xs))
     centroids = compute_centroids(xs, memberships, m)
-    print('centroids', np.shape(centroids), centroids)
     centroid_history = [centroids]
     membership_history = [memberships]
     for _ in range(max_iter):
@@ -84,27 +83,11 @@ def fuzzy_k_means(xs, nr_centroids, m=2, max_iter=30, epsilon=1e-2):
     return centroids, memberships, centroid_history, membership_history
 
 
-print("debug*******")
-data = [(1, 3), (2, 5), (4, 8), (7, 9)]
-mbs = [[0.8, 0.2], [0.7, 0.3], [0.2, 0.8], [0.1, 0.9]]
-centroids = compute_centroids(data, mbs, 2)
-distances = compute_distances_from_centroids(data, centroids)
-memberships = update_memberships(distances, 2)
-print(centroids)
-print(distances)
-print(memberships)
-print("debug*******")
 if __name__ == '__main__':
-    xs = np.random.random_integers(100, size=(100,))
-    ys = np.random.random_integers(100, size=(100,))
     gen = DataGenerator([[20, 20], [100, 100]], 30, 50)
     data = gen.generate()
-    # data = [[0, 10], [1, 10], [10, 100], [11, 100]]
     cents, membs, history, memb_hist = fuzzy_k_means(data, 2, max_iter=100)
     print(cents, membs)
-    print("*" * 10)
-    print(np.shape(cents), np.shape(membs))
-    print("*" * 10)
     for h in range(len(history)):
         print('*', history[h])
     data = np.array(list(zip(*data)))
